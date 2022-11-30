@@ -39,6 +39,11 @@ public class GameManager {
 
     private void start(){
         hasStarted = true;
+        PontoonHost.pendingGames.remove(this);
+        for (Player player :
+                players) {
+            player.getConnection().sendMessage("announceYour game has started");
+        }
         initiateRoutine();
     }
 
@@ -62,5 +67,13 @@ public class GameManager {
             bank.shareStake(player);
         }
 
+    }
+
+    public boolean addPlayer(Player player){
+        if(!hasStarted){
+            players.add(player);
+            return true;
+        }
+        return false;
     }
 }

@@ -2,6 +2,7 @@ package com.pontoonServer.server;
 
 import com.google.gson.Gson;
 import com.pontoonServer.cardEngine.Card;
+import com.pontoonServer.game.PontoonHost;
 
 public class GsonSerializer {
 

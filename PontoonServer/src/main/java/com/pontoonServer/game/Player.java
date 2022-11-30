@@ -1,7 +1,7 @@
 package com.pontoonServer.game;
 
 import com.pontoonServer.cardEngine.Hand;
-import com.pontoonServer.server.Connector;
+import com.pontoonServer.server.ConnectedPlayer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,9 +10,22 @@ public class Player {
 
     List<Hand> hands;
 
-    public Player(){
+    int stake;
+
+    public List<Hand> getHands() {
+        return hands;
+    }
+
+    public ConnectedPlayer getConnection() {
+        return connection;
+    }
+
+    private ConnectedPlayer connection;
+
+    public Player(ConnectedPlayer connection){
         hands = new ArrayList<>();
         hands.add(new Hand());
+        this.connection = connection;
     }
 
     public void makeBank() {
@@ -52,7 +65,7 @@ public class Player {
     }
 
     private Move getNextMove() {
-        return null;
+        connection.sendMessage("getmove");
     }
 
     public void shareStake(Player player) {
@@ -60,6 +73,15 @@ public class Player {
     }
 
     public void getStake() {
-        //TODO: flesh out getting stake from for each player.
+        connection.sendMessage("getstake");
+        try {
+            hands.wait();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setStake(int stake) {
+        this.stake = stake;
     }
 }

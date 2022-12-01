@@ -20,6 +20,7 @@ public class Hand {
     }
     public Hand(){
         cards = new LinkedList<>();
+        stateManager = new StateManager();
     }
 
     public int getValue(){
@@ -61,5 +62,19 @@ public class Hand {
     public void receiveCard(Card card){
         cards.add(card);
         stateManager.newState(getState());
+    }
+
+    public StateManager getStateManager(){
+        return this.stateManager;
+    }
+
+    public Hand split(){
+        if (cards.size() == 2 && (cards.get(0).value == cards.get(1).value)){
+            Hand newHand = new Hand();
+            newHand.receiveCard(cards.get(1));
+            cards.remove(1);
+            return newHand;
+        }
+        throw new IllegalStateException("Your card is not splitabble");
     }
 }

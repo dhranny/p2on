@@ -10,12 +10,12 @@ public class ConnectedPlayer extends Thread {
     Socket socket;
     BufferedReader inputStream;
     BufferedWriter outputStream;
-    Player player;
+    public Player presentPlayer;
     GsonSerializer gsonSerializer;
 
     ConnectedPlayer (Socket socket){
         System.out.println("A connection just came in");
-        this.player = new Player(this);
+        this.presentPlayer = new Player(this);
         this.socket = socket;
         gsonSerializer = new GsonSerializer();
     }
@@ -30,6 +30,8 @@ public class ConnectedPlayer extends Thread {
             e.printStackTrace();
         }
     }
+
+
 
     public void sendMessage(String message){
         try {
@@ -46,7 +48,6 @@ public class ConnectedPlayer extends Thread {
                     if(inputStream.ready()){
                         String message = readLine();
                         manageMessage(message);
-                        player.getHands().notify();
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -63,19 +64,36 @@ public class ConnectedPlayer extends Thread {
     private void manageMessage(String message){
         String messagen = message.strip();
         if(messagen.startsWith("newgame")){
-            PontoonHost.newGame(player);
+            PontoonHost.newGame(presentPlayer);
         }
         if (messagen.startsWith("getgroups")){
             if(PontoonHost.pendingGames.isEmpty()) {
-                PontoonHost.newGame(player);
+                PontoonHost.newGame(presentPlayer);
                 sendMessage("announceYou have being added to a game, waiting for the game to start");
                 return;
             }
-            while(PontoonHost.getRandomGames().addPlayer(player) == false);
+            while(PontoonHost.getRandomGames().addPlayer(presentPlayer) == false);
             sendMessage("announceYou have being added to a game, waiting for the game to start");
         }
         if(messagen.strip().startsWith("stake")){
-            player.setStake(Integer.parseInt(messagen.strip().substring(5));
+            presentPlayer.setStake(Integer.parseInt(messagen.strip().substring(5)));
+            synchronized (this){
+                this.notifyAll();
+            }
+            System.out.println("Player's stake is " + Integer.parseInt(messagen.strip().substring(5)));
+        }
+        if(messagen.strip().startsWith("card")){
+            presentPlayer.dealPresent(messagen);
+            synchronized (this){
+                this.notifyAll();
+            }
+        }
+
+        if(messagen.strip().startsWith("move")){
+            presentPlayer.nextMove = gsonSerializer.fromMoveJson(messagen.strip().substring(4));
+            synchronized (this){
+                this.notifyAll();
+            }
         }
     }
 }

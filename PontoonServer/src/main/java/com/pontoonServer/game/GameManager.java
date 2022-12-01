@@ -27,7 +27,7 @@ public class GameManager {
         Thread sleeper = new Thread(() -> {
             while(players.size() < 2){
                 try {
-                    Thread.sleep(60000);
+                    Thread.sleep(600);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -54,11 +54,14 @@ public class GameManager {
         bank.dealOutCards(players);
         for (Player player :
                 players) {
-            player.getStake();
+            player.getStake(player);
         }
-
+        bank.dealOutCards(players);
         for (Player player :
                 players) {
+            if (player.isBank)
+                continue;
+            player.start();
             bank.engageMiniGame(player);
         }
 

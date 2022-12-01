@@ -28,15 +28,16 @@ public class Connector {
         @Override
         public void run() {
             super.run();
-
-            Socket socket;
-            try {
-                socket = serverSocket.accept();
-                ConnectedPlayer cPlayer = new ConnectedPlayer(socket);
-                cPlayer.start();
-                connectedPlayers.add(cPlayer);
-            } catch (IOException e) {
-                e.printStackTrace();
+            while (true){
+                Socket socket;
+                try {
+                    socket = serverSocket.accept();
+                    ConnectedPlayer cPlayer = new ConnectedPlayer(socket);
+                    cPlayer.start();
+                    connectedPlayers.add(cPlayer);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
 
         }

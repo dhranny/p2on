@@ -10,7 +10,7 @@ public class StateManager {
     CliAnnouncer cliAnnouncer = new CliAnnouncer();
 
     public StateManager(){
-        moves = new HashSet<>();
+        moves = new HashSet<Move.AVAILABLE_MOVES>();
         moves.add(Move.AVAILABLE_MOVES.TWIST);
         moves.add(Move.AVAILABLE_MOVES.STICK);
         moves.add(Move.AVAILABLE_MOVES.BUY_CARD);
@@ -23,15 +23,15 @@ public class StateManager {
             removeSplit();
         if(handState == Hand.HAND_STATE.PONTOON) {
             finisher();
-            cliAnnouncer.announceState(handState);
+            System.out.println("You've gotten a pontoon");
         }
         if(handState == Hand.HAND_STATE.BUST) {
             finisher();
-            cliAnnouncer.announceState(handState);
+            System.out.println("You've busted");
         }
         if(handState == Hand.HAND_STATE.TWENTY_ONE_WITH_FIVE) {
             finisher();
-            cliAnnouncer.announceState(handState);
+            System.out.println("You have 21 with five cards");;
         }
     }
 
@@ -46,6 +46,10 @@ public class StateManager {
 
     public Set<Move.AVAILABLE_MOVES> removeSplit(){
         moves.remove(Move.AVAILABLE_MOVES.SPLIT);
+        return moves;
+    }
+
+    public Set<Move.AVAILABLE_MOVES> getMoves(){
         return moves;
     }
 

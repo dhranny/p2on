@@ -9,8 +9,10 @@ import java.util.List;
 public class Player {
 
     List<Hand> hands;
-
     int stake;
+    public boolean isBank;
+    Player presentEngagement;
+    public Move nextMove;
 
     public List<Hand> getHands() {
         return hands;
@@ -29,59 +31,82 @@ public class Player {
     }
 
     public void makeBank() {
-        //TODO: flesh out making bank
+        connection.sendMessage("announceYou are now the bank");
+        isBank = true;
     }
 
     public void dealOutCards(List<Player> players) {
-        //TODO: FLESH OUT DEALING OUT CARDS
+        for (Player player :
+                players) {
+            dealCard(player);
+        }
     }
 
     public void engageMiniGame(Player player) {
-        //TODO: flesh out engage mini game
+        presentEngagement = player;
         for (Hand hand : hands) {
-            Move.AVAILABLE_MOVES move = null;
+            Move.AVAILABLE_MOVES move = getNextMove(player).getMove();
             while (move != Move.AVAILABLE_MOVES.STICK) {
-                Move moveObj = hand.getNextMove();
 
-                move = moveObj.getMove();
-                switch (moveObj.getMove()) {
-                    case SPLIT:
-                        player.getNewHand();
+                switch (move) {
                     case TWIST:
-                        dealCard(hand);
-                    case BUY_CARD:
-                        dealCard(hand);
+                        dealCard(player);
                     default:
-                        throw new IllegalArgumentException("Wrong move");
+                        System.out.println("Wrong move");
                 }
+                move = getNextMove(player).getMove();
             }
         }
     }
 
-    private void dealCard(Hand hand) {
+    public void start(){
+        connection.presentPlayer = this;
     }
 
-    private void getNewHand() {
+    private void dealCard(Player player) {
+        presentEngagement = player;
+        connection.sendMessage("dealcard");
+        synchronized (connection){
+            try {
+                connection.wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
-    private Move getNextMove() {
-        connection.sendMessage("getmove");
+    private Move getNextMove(Player player) {
+        player.connection.sendMessage("getmove");
+        synchronized (player.connection){
+            try {
+                player.connection.wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        return presentEngagement.nextMove;
     }
 
     public void shareStake(Player player) {
         //TODO: flesh out stake sharing
     }
 
-    public void getStake() {
-        connection.sendMessage("getstake");
-        try {
-            hands.wait();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+    public void getStake(Player player) {
+        player.connection.sendMessage("getstake");
+        synchronized (player.connection){
+            try {
+                player.connection.wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     public void setStake(int stake) {
         this.stake = stake;
+    }
+
+    public void dealPresent(String message) {
+        presentEngagement.connection.sendMessage(message);
     }
 }

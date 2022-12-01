@@ -7,9 +7,6 @@ import java.util.List;
 public class Hand {
     List<Card> cards;
 
-    public Move getNextMove() {
-        return null;
-    }
 
     public enum HAND_STATE {
         BUST,

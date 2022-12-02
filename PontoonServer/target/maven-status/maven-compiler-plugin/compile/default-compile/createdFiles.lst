@@ -1,4 +1,3 @@
 com/pontoonServer/server/Connector.class
 com/pontoonServer/server/Connector$ServerAcceptor.class
-com/pontoonServer/server/Connector$ConnectedPlayer.class
 com/pontoonServer/ServerMain.class

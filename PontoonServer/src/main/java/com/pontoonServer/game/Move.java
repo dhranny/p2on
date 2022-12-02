@@ -3,10 +3,8 @@ package com.pontoonServer.game;
 public class Move {
 
     public enum AVAILABLE_MOVES{
-        TWIST,
-        STICK,
-        BUY_CARD,
-        SPLIT;
+        DEAL,
+        HOLD;
     }
 
     private int handId;

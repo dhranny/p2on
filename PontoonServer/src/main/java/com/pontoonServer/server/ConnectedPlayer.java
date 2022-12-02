@@ -75,13 +75,22 @@ public class ConnectedPlayer extends Thread {
             while(PontoonHost.getRandomGames().addPlayer(presentPlayer) == false);
             sendMessage("announceYou have being added to a game, waiting for the game to start");
         }
-        if(messagen.strip().startsWith("stake")){
+
+        if(messagen.strip().startsWith("value")){
             presentPlayer.setStake(Integer.parseInt(messagen.strip().substring(5)));
             synchronized (this){
                 this.notifyAll();
             }
-            System.out.println("Player's stake is " + Integer.parseInt(messagen.strip().substring(5)));
+            System.out.println(presentPlayer.name +"'s value is " + Integer.parseInt(messagen.strip().substring(5)));
         }
+
+        if(messagen.strip().startsWith("name")){
+            presentPlayer.setName(messagen.strip().substring(4));
+            synchronized (this){
+                this.notifyAll();
+            }
+        }
+
         if(messagen.strip().startsWith("card")){
             presentPlayer.dealPresent(messagen);
             synchronized (this){

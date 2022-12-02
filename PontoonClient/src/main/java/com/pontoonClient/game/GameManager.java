@@ -30,6 +30,7 @@ public class GameManager {
         gson = new Gson();
         Hand nHand = new Hand();
         presentHand = nHand;
+        nHand.stateManager.connection = connector;
         hands = new ArrayList<>();
         startGame();
     }
@@ -38,6 +39,8 @@ public class GameManager {
         announce.output.println("Welcome to Pont22n");
         connector.sendMessage("getgroups");
     }
+
+
 
     public void dealCard(){
         Card card = deck.deal();

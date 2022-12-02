@@ -9,7 +9,8 @@ import java.util.List;
 public class Player {
 
     List<Hand> hands;
-    int stake;
+    int value;
+    public String name;
     public boolean isBank;
     Player presentEngagement;
     public Move nextMove;
@@ -38,6 +39,8 @@ public class Player {
     public void dealOutCards(List<Player> players) {
         for (Player player :
                 players) {
+            if (player.isBank)
+                continue;
             dealCard(player);
         }
     }
@@ -46,11 +49,12 @@ public class Player {
         presentEngagement = player;
         for (Hand hand : hands) {
             Move.AVAILABLE_MOVES move = getNextMove(player).getMove();
-            while (move != Move.AVAILABLE_MOVES.STICK) {
+            while (move != Move.AVAILABLE_MOVES.HOLD) {
 
                 switch (move) {
-                    case TWIST:
+                    case DEAL:
                         dealCard(player);
+                        break;
                     default:
                         System.out.println("Wrong move");
                 }
@@ -61,6 +65,34 @@ public class Player {
 
     public void start(){
         connection.presentPlayer = this;
+    }
+
+    public void dealSelf(){
+        dealCard(this);
+    }
+
+    public int getValue(){
+        connection.sendMessage("getvalue");
+        synchronized (connection){
+            try {
+                connection.wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        return value;
+    }
+
+    public String getName(){
+        connection.sendMessage("getname");
+        synchronized (connection){
+            try {
+                connection.wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        return name;
     }
 
     private void dealCard(Player player) {
@@ -103,7 +135,11 @@ public class Player {
     }
 
     public void setStake(int stake) {
-        this.stake = stake;
+        this.value = stake;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public void dealPresent(String message) {

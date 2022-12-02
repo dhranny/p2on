@@ -32,8 +32,9 @@ public class Deck {
     }
 
     public Card deal(){
-        Card dealedCard = cards.get(1);
-        cards.remove(1);
+        int randomNumber = (int)Math.random() * cards.size();
+        Card dealedCard = cards.get(randomNumber);
+        cards.remove(randomNumber);
         return dealedCard;
     }
 }

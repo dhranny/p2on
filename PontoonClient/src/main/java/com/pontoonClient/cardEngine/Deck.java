@@ -24,7 +24,7 @@ public class Deck {
     public void shuffle(){
         Card temp;
         for (int i =0; i < cards.size(); i++) {
-            int randomNumber = (int)Math.random() * cards.size();
+            int randomNumber = (int)(Math.random() * (cards.size() - 1));
             temp = cards.get(i);
             cards.remove(i);
             cards.add(i, cards.get(randomNumber));
@@ -34,8 +34,9 @@ public class Deck {
     }
 
     public Card deal(){
-        Card dealedCard = cards.get(1);
-        cards.remove(1);
+        int randomNumber = (int)Math.random() * cards.size();
+        Card dealedCard = cards.get(randomNumber);
+        cards.remove(randomNumber);
         return dealedCard;
     }
 }

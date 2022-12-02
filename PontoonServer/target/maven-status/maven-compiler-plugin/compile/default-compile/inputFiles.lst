@@ -1,2 +1,11 @@
-/home/niel/workplace/Pontoon/PontoonServer/src/main/java/com/pontoonServer/ServerMain.java
-/home/niel/workplace/Pontoon/PontoonServer/src/main/java/com/pontoonServer/server/Connector.java
+/home/niel/workplace/pontoon/PontoonServer/src/main/java/com/pontoonServer/cardEngine/Card.java
+/home/niel/workplace/pontoon/PontoonServer/src/main/java/com/pontoonServer/cardEngine/Hand.java
+/home/niel/workplace/pontoon/PontoonServer/src/main/java/com/pontoonServer/game/GameManager.java
+/home/niel/workplace/pontoon/PontoonServer/src/main/java/com/pontoonServer/server/GsonSerializer.java
+/home/niel/workplace/pontoon/PontoonServer/src/main/java/com/pontoonServer/ServerMain.java
+/home/niel/workplace/pontoon/PontoonServer/src/main/java/com/pontoonServer/server/ConnectedPlayer.java
+/home/niel/workplace/pontoon/PontoonServer/src/main/java/com/pontoonServer/server/Connector.java
+/home/niel/workplace/pontoon/PontoonServer/src/main/java/com/pontoonServer/game/Player.java
+/home/niel/workplace/pontoon/PontoonServer/src/main/java/com/pontoonServer/cardEngine/Deck.java
+/home/niel/workplace/pontoon/PontoonServer/src/main/java/com/pontoonServer/game/Move.java
+/home/niel/workplace/pontoon/PontoonServer/src/main/java/com/pontoonServer/game/PontoonHost.java

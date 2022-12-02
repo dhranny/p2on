@@ -52,10 +52,9 @@ public class GameManager {
         Player bank = players.get((int)(Math.random()* (players.size() - 1)));
         bank.makeBank();
         this.bank = bank;
-        for (Player player :
-                players) {
+        players.parallelStream().forEach(player -> {
             player.getName();
-        }
+        });
         bank.dealOutCards(players);
         bank.dealOutCards(players);
         for (Player player :

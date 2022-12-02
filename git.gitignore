@@ -1,0 +1,7 @@
+target/
+PontoonClient/target
+PontoonClient/target/
+PontoonClient/target/*
+PontoonServer/target
+PontoonServer/target/
+PontoonServer/target/*

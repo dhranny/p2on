@@ -98,6 +98,11 @@ public class ConnectedPlayer extends Thread {
             }
         }
 
+        if(messagen.strip().startsWith("cardreceived")){
+            System.out.println("pp");
+
+        }
+
         if(messagen.strip().startsWith("move")){
             presentPlayer.nextMove = gsonSerializer.fromMoveJson(messagen.strip().substring(4));
             synchronized (this){

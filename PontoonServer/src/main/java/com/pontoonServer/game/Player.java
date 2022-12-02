@@ -1,5 +1,7 @@
 package com.pontoonServer.game;
 
+import com.google.gson.GsonBuilder;
+import com.pontoonServer.cardEngine.Card;
 import com.pontoonServer.cardEngine.Hand;
 import com.pontoonServer.server.ConnectedPlayer;
 
@@ -72,14 +74,14 @@ public class Player {
     }
 
     public int getValue(){
-        connection.sendMessage("getvalue");
-        synchronized (connection){
-            try {
-                connection.wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+        //connection.sendMessage("getvalue");
+        //synchronized (connection){
+        //    try {
+        //        connection.wait();
+        //    } catch (InterruptedException e) {
+        //        e.printStackTrace();
+        //    }
+        //}
         return value;
     }
 
@@ -143,6 +145,9 @@ public class Player {
     }
 
     public void dealPresent(String message) {
+        GsonBuilder gb = new GsonBuilder();
+        System.out.println(message);
+        presentEngagement.value += gb.create().fromJson(message.strip().substring(4), Card.class).value;
         presentEngagement.connection.sendMessage(message);
     }
 }

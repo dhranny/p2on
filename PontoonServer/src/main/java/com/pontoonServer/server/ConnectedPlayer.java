@@ -1,11 +1,17 @@
 package com.pontoonServer.server;
 
+import com.pontoonServer.game.GameManager;
 import com.pontoonServer.game.Player;
 import com.pontoonServer.game.PontoonHost;
 
 import java.io.*;
 import java.net.Socket;
 
+/**
+ * This is the class for a connection.
+ * This class manages the connection of
+ * that a client makes with the sever
+ */
 public class ConnectedPlayer extends Thread {
     Socket socket;
     BufferedReader inputStream;
@@ -19,6 +25,12 @@ public class ConnectedPlayer extends Thread {
         this.socket = socket;
         gsonSerializer = new GsonSerializer();
     }
+
+    /**
+     * This is the starting point when the connectedplayer
+     * thread is started. The method puts all things in place
+     * server connection for a player.
+     */
     @Override
     public void run() {
         super.run();
@@ -32,7 +44,12 @@ public class ConnectedPlayer extends Thread {
     }
 
 
-
+    /**
+     * This method is used to send messages to the client.
+     * The method receives a string message relay it to
+     * the client owning the connection.
+     * @param message
+     */
     public void sendMessage(String message){
         try {
             outputStream.write(message + "\n");
@@ -41,6 +58,11 @@ public class ConnectedPlayer extends Thread {
             e.printStackTrace();
         }
     }
+
+    /**
+     * This method creates a new thread that waits for new messages
+     * from the client that owns the connection.
+     */
     private void waitNewMessage(){
         Thread waiter = new Thread(() ->{
             while (true){
@@ -57,42 +79,42 @@ public class ConnectedPlayer extends Thread {
         waiter.start();
     }
 
+    /**
+     * A wrapper function for inputStream.readLine
+     * @return
+     * @throws IOException
+     */
     private String readLine() throws IOException {
         return inputStream.readLine();
     }
 
+    /**
+     * This method is used to manage new messages from the
+     * client. The method does an assigned task based on
+     * message received from the client.
+     * @param message
+     */
     private void manageMessage(String message){
         String messagen = message.strip();
-        if(messagen.startsWith("newgame")){
-            PontoonHost.newGame(presentPlayer);
-        }
-        if (messagen.startsWith("getgroups")){
-            if(PontoonHost.pendingGames.isEmpty()) {
-                PontoonHost.newGame(presentPlayer);
-                sendMessage("announceYou have being added to a game, waiting for the game to start");
-                return;
+        if (messagen.startsWith("join")){
+            try{
+                if(PontoonHost.getRandomGames().addPlayer(presentPlayer) == false)
+                    sendMessage("join_fail");
             }
-            while(PontoonHost.getRandomGames().addPlayer(presentPlayer) == false);
-            sendMessage("announceYou have being added to a game, waiting for the game to start");
+            catch (IndexOutOfBoundsException e){
+                sendMessage("join_fail");
+            }
+            sendMessage("announceYou have been added to a game, waiting for the game to start");
+        }
+        if(messagen.startsWith("round")) {
+            PontoonHost.newGame(presentPlayer, Integer.parseInt(messagen.substring(5)));
+            sendMessage("announceYou have been added to a game, waiting for the game to start");
+            return;
         }
 
-        if(messagen.strip().startsWith("value")){
-            presentPlayer.setStake(Integer.parseInt(messagen.strip().substring(5)));
-            synchronized (this){
-                this.notifyAll();
-            }
-            System.out.println(presentPlayer.name +"'s value is " + Integer.parseInt(messagen.strip().substring(5)));
-        }
 
         if(messagen.strip().startsWith("name")){
             presentPlayer.setName(messagen.strip().substring(4));
-            synchronized (this){
-                this.notifyAll();
-            }
-        }
-
-        if(messagen.strip().startsWith("card")){
-            presentPlayer.dealPresent(messagen);
             synchronized (this){
                 this.notifyAll();
             }
@@ -105,6 +127,7 @@ public class ConnectedPlayer extends Thread {
 
         if(messagen.strip().startsWith("move")){
             presentPlayer.nextMove = gsonSerializer.fromMoveJson(messagen.strip().substring(4));
+            System.out.println(messagen);
             synchronized (this){
                 this.notifyAll();
             }

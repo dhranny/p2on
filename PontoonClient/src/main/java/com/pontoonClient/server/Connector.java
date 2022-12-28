@@ -10,10 +10,14 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.util.Set;
 
+/**
+ * This is the class that manages the connection of
+ * this client to the server. It manages the exchange
+ * of data.
+ */
 public class Connector {
 
     private BufferedReader inputStream;
-    private BufferedWriter outputStream;
     private BufferedReader cliScanner;
     GameManager gameManager;
     GsonSerializer gson;
@@ -28,6 +32,20 @@ public class Connector {
         getResponse();
     }
 
+    public Connector(String host, int port) throws IOException {
+        Socket socket = new Socket(host, port);
+        cliScanner = new BufferedReader(new InputStreamReader(System.in));
+        inputStream = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        outputStream = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+        gameManager = new GameManager(this);
+        gson = new GsonSerializer();
+        getResponse();
+    }
+
+    /**
+     * Method to send messages to the server.
+     * @param message
+     */
     public void sendMessage(String message){
         try {
             outputStream.write(message + "\n");
@@ -37,7 +55,16 @@ public class Connector {
         }
 
     }
+    private BufferedWriter outputStream;
 
+    public BufferedReader getCliScanner() {
+        return cliScanner;
+    }
+
+    /**
+     * This method creates a new thread that waits
+     * for a new message to arrive from the server
+     */
     public void getResponse(){
         Thread responseWaiter = new Thread(() -> {while(true){
             try {
@@ -52,28 +79,19 @@ public class Connector {
         responseWaiter.start();
     }
 
+    /**
+     * This is the method that acts upon the message
+     * receieved from the server.
+     * @param message
+     */
     private void manageResponse(String message){
         if(message.strip().startsWith("announce")){
             System.out.println(message.strip().substring(8));
         }
 
-        if(message.strip().startsWith("getvalue")){
-            sendMessage("value" + gameManager.presentHand.getValue());
-        }
-
-        if(message.strip().startsWith("getname")){
-            System.out.println("Please input your name");
-            String name = null ;
-            try {
-                name = cliScanner.readLine();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            sendMessage("name" + name);
-        }
-
-        if (message.strip().equalsIgnoreCase("dealcard")){
-            gameManager.dealCard();
+        if(message.strip().startsWith("end")){
+            gameManager.end();
+            System.out.println("A game just ended");
         }
 
         if (message.strip().equalsIgnoreCase("getmove")){
@@ -112,8 +130,17 @@ public class Connector {
             Card card = gson.fromCardJson(message.substring(4));
             gameManager.placeCard(card);
         }
+
+        if(message.strip().equalsIgnoreCase("join_fail")){
+            System.out.println("Was unable to join");
+            System.exit(1);
+        }
     }
 
+    /**
+     * This method is used to report the move the user made to the
+     * server.
+     */
     public void tellServer(){
         Move move = new Move();
         move.setMove(Move.AVAILABLE_MOVES.HOLD);

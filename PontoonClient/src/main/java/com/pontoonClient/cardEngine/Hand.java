@@ -5,6 +5,10 @@ import com.pontoonClient.game.StateManager;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * This is the class that manages the Hand
+ * that hold the Cards for the player.
+ */
 public class Hand {
     List<Card> cards;
     public StateManager stateManager;
@@ -18,6 +22,11 @@ public class Hand {
         stateManager = new StateManager();
     }
 
+    /**
+     * This method is used to get the summation
+     * of the value of the card.
+     * @return
+     */
     public int getValue(){
         int value = 0;
         for (Card card: cards) {
@@ -32,6 +41,12 @@ public class Hand {
         return HAND_STATE.LESSER_THAN_TWENTY_ONE;
     }
 
+    /**
+     * This method is used to get the Value based on
+     * the rules of the game.
+     * @param card
+     * @return
+     */
     public void receiveCard(Card card){
         cards.add(card);
         stateManager.newState(getState());

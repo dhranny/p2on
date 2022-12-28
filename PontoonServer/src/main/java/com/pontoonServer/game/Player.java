@@ -1,7 +1,5 @@
 package com.pontoonServer.game;
 
-import com.google.gson.GsonBuilder;
-import com.pontoonServer.cardEngine.Card;
 import com.pontoonServer.cardEngine.Hand;
 import com.pontoonServer.server.ConnectedPlayer;
 
@@ -21,7 +19,7 @@ public class Player {
         return hands;
     }
 
-    public ConnectedPlayer getConnection() {
+    public ConnectedPlayer getConnector() {
         return connection;
     }
 
@@ -33,58 +31,42 @@ public class Player {
         this.connection = connection;
     }
 
-    public void makeBank() {
-        connection.sendMessage("announceYou are now the bank");
-        isBank = true;
+    public Player(){
+        hands = new ArrayList<>();
+        hands.add(new Hand());
     }
 
-    public void dealOutCards(List<Player> players) {
-        for (Player player :
-                players) {
-            if (player.isBank)
-                continue;
-            dealCard(player);
-        }
-    }
 
-    public void engageMiniGame(Player player) {
-        presentEngagement = player;
-        for (Hand hand : hands) {
-            Move.AVAILABLE_MOVES move = getNextMove(player).getMove();
-            while (move != Move.AVAILABLE_MOVES.HOLD) {
 
-                switch (move) {
-                    case DEAL:
-                        dealCard(player);
-                        break;
-                    default:
-                        System.out.println("Wrong move");
-                }
-                move = getNextMove(player).getMove();
-            }
-        }
-    }
+    /**
+     * This method deals out a card to each
+     * player given as a parameter.
+     * @param players
+     */
 
+
+    /**
+     * This method set up a player to
+     * start a game.
+     */
     public void start(){
         connection.presentPlayer = this;
     }
 
-    public void dealSelf(){
-        dealCard(this);
-    }
 
+    /**
+     * This is the getter method for value
+     * @return int
+     */
     public int getValue(){
-        //connection.sendMessage("getvalue");
-        //synchronized (connection){
-        //    try {
-        //        connection.wait();
-        //    } catch (InterruptedException e) {
-        //        e.printStackTrace();
-        //    }
-        //}
         return value;
     }
 
+    /**
+     * This method is used to request for
+     * the name of the player.
+     * @return
+     */
     public String getName(){
         connection.sendMessage("getname");
         synchronized (connection){
@@ -97,19 +79,15 @@ public class Player {
         return name;
     }
 
-    private void dealCard(Player player) {
-        presentEngagement = player;
-        connection.sendMessage("dealcard");
-        synchronized (connection){
-            try {
-                connection.wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 
-    private Move getNextMove(Player player) {
+
+    /**
+     * This method is used to get the next
+     * move from the player
+     * @param player
+     * @return
+     */
+    protected Move getNextMove(Player player) {
         player.connection.sendMessage("getmove");
         synchronized (player.connection){
             try {
@@ -121,33 +99,16 @@ public class Player {
         return presentEngagement.nextMove;
     }
 
-    public void shareStake(Player player) {
-        //TODO: flesh out stake sharing
-    }
-
-    public void getStake(Player player) {
-        player.connection.sendMessage("getstake");
-        synchronized (player.connection){
-            try {
-                player.connection.wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public void setStake(int stake) {
-        this.value = stake;
-    }
-
+    /**
+     * This is the setter method for name parameter.
+     * @param name
+     */
     public void setName(String name) {
         this.name = name;
     }
-
-    public void dealPresent(String message) {
-        GsonBuilder gb = new GsonBuilder();
-        System.out.println(message);
-        presentEngagement.value += gb.create().fromJson(message.strip().substring(4), Card.class).value;
-        presentEngagement.connection.sendMessage(message);
+    public void end() {
+        value = 0;
+        connection.sendMessage("end");
     }
+
 }

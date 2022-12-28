@@ -4,6 +4,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.pontoonClient.cardEngine.Card;
 
+/**
+ * This class is used to convert objects to json strings
+ * and vice versa
+ */
 public class GsonSerializer {
 
     public GsonSerializer(){
@@ -13,21 +17,23 @@ public class GsonSerializer {
 
     GsonBuilder gsonB;
     Gson gson;
-    public String createMessage(Card card){
 
-        return gson.toJson(card);
-    }
-
-    public Move fromMoveJson(String moveJson) {
-        gson = new Gson();
-        Gson gson1 = gson.newBuilder().create();
-        return gson.fromJson(moveJson, Move.class);
-    }
-
+    /**
+     * This method is used to create a Card object
+     * from a json string.
+     * @param cardJson
+     * @return
+     */
     public Card fromCardJson(String cardJson) {
         return gson.fromJson(cardJson, Card.class);
     }
 
+    /**
+     * This method is used to create a Json string
+     * from a Move object.
+     * @param move
+     * @return
+     */
     public String createMessage(Move move) {
         return gson.toJson(move);
     }

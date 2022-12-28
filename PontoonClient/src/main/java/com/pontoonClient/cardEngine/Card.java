@@ -2,6 +2,9 @@ package com.pontoonClient.cardEngine;
 
 import java.util.Objects;
 
+/**
+ * Class for the specification of a card object.
+ */
 public class Card {
 
     public Card (CardColor color, int value, CardType type){
@@ -27,6 +30,11 @@ public class Card {
         KING;
     }
 
+    /**
+     * This is a custom equals method for checking equality.
+     * @param o
+     * @return
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -35,6 +43,10 @@ public class Card {
         return value == card.value && color == card.color && type == this.type;
     }
 
+    /**
+     * This is a custom method for creating hashcode for the object
+     * @return
+     */
     @Override
     public int hashCode() {
         return Objects.hash(color, value);

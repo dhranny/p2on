@@ -6,9 +6,12 @@ import com.pontoonClient.server.Connector;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * This method manages and control the state
+ * of a player's hand.
+ */
 public class StateManager {
     Set<Move.AVAILABLE_MOVES> moves;
-    CliAnnouncer cliAnnouncer = new CliAnnouncer();
     public Connector connection;
 
     public StateManager(){
@@ -28,6 +31,10 @@ public class StateManager {
 
     }
 
+    /**
+     * This method  is used to clear state when a round of
+     * game finishes.
+     */
     private void finisher(){
         moves.clear();
     }

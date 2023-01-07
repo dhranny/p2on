@@ -9,10 +9,10 @@ import java.net.Socket;
 
 /**
  * This is the class for a connection.
- * This class manages the connection of
+ * This class manages the connection
  * that a client makes with the sever
  */
-public class ConnectedPlayer extends Thread {
+public class ConnectedPlayer extends Thread implements Connectable{
     Socket socket;
     BufferedReader inputStream;
     BufferedWriter outputStream;
@@ -94,7 +94,7 @@ public class ConnectedPlayer extends Thread {
      * message received from the client.
      * @param message
      */
-    private void manageMessage(String message){
+    public void manageMessage(String message){
         String messagen = message.strip();
         if (messagen.startsWith("join")){
             try{

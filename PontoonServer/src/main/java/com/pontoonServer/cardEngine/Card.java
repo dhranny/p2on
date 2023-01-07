@@ -1,11 +1,12 @@
 package com.pontoonServer.cardEngine;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
  * Class for the specification of a card object.
  */
-public class Card {
+public class Card implements Serializable {
 
     public Card (CardColor color, int value, CardType type){
         this.color = color;

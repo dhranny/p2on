@@ -18,7 +18,7 @@ public class Connector {
 
 
     ServerSocket serverSocket;
-    Set<ConnectedPlayer> connectedPlayers;
+    Set<Connectable> connectedPlayers;
 
     /**
      * Constructor for default server port

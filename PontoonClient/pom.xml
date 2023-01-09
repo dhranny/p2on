@@ -13,7 +13,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>com.pontoonClient.Main</mainClass>
+                            <mainClass>pontoonClient.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

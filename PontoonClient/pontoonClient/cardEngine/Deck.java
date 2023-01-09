@@ -9,7 +9,7 @@ import java.util.Set;
  * This is the method used to manage
  * the card deck
  */
-public class Deck {
+public class Deck implements Deckish{
     public List<Card> cards;
     public Deck (){
         cards = create();
@@ -21,7 +21,7 @@ public class Deck {
      * list of Cards that acts as the Deck.
      * @return List<Card>
      */
-    private List<Card> create(){
+    public List<Card> create(){
         List<Card> cards = new ArrayList();
         for (Card.CardColor color : Card.CardColor.values()) {
             for (int value = 1; value <= 13; value++) {

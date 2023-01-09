@@ -1,6 +1,8 @@
 package game;
 
-public class Move {
+import java.io.Serializable;
+
+public class Move implements Serializable {
 
     public enum AVAILABLE_MOVES{
         DEAL,

@@ -1,24 +1,26 @@
-package com.pontoonServer.game;
+package game;
 
-import com.pontoonServer.cardEngine.Deck;
+import cardEngine.Deck;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class GameManager {
 
-    List<Player> players;
+    List<Playable> players;
     Boolean hasStarted;
     Deck deck;
     Player bank;
     int rounds;
 
-    public GameManager(Player player, int rounds){
+    public GameManager(List<Playable> player, int rounds){
         this.rounds = rounds;
         this.deck = new Deck();
         if(player == null)
             throw new IllegalArgumentException("The player is null");
         players = new ArrayList<>();
-        players.add(player);
+        players.addAll(player);
         hasStarted = false;
     }
 
@@ -28,7 +30,7 @@ public class GameManager {
     * It follows the stepwise procedure of the
     * game from the beginning to end.
      */
-    public void initiateRoutine() {
+    public void initiateRoutine() throws IOException {
         Bank bank = new Bank();
         this.bank = bank;
         bank.makeBank();
@@ -37,7 +39,6 @@ public class GameManager {
         players.forEach(player -> {
             if (player.isBank)
                 return;
-            player.start();
             bank.engageMiniGame(player);
 
         });
@@ -45,7 +46,6 @@ public class GameManager {
             bank.dealSelf();
         }
         if(bank.getValue() > 21){
-            announceAll("announceThe bank is higher than 21, the bank lost.");
             players.forEach(player -> player.end());
             return;
         }
@@ -53,27 +53,15 @@ public class GameManager {
         players.forEach(player -> player.end());
     }
 
-    /**
-    *This method is used to announce a statement to the
-    * clients playing this particular game.
-     */
-    public void announceAll(String message){
-        for(Player player: players){
-            if(bank == player){
-                return;
-            }
-            player.getConnector().sendMessage(message);
-        }
-    }
 
     /**
      *This method calculates who the winner is and
      * send it out to all players.
      */
     public void chooseWinner(){
-        List<Player> drawList = new ArrayList<>();
+        List<Playable> drawList = new ArrayList<>();
         int high = 0;
-        for (Player player :
+        for (Playable player :
                 players) {
             if(player.isBank)
                 continue;
@@ -92,11 +80,11 @@ public class GameManager {
             return;
         }
         if(drawList.size() == 1)
-            System.out.println(drawList.get(0).name + " is the winner");
+            System.out.println(drawList.get(0).getName() + " is the winner");
         else{
-            for (Player player :
+            for (Playable player :
                     drawList) {
-                System.out.print(player.name + ", ");
+                System.out.print(player.getName() + ", ");
             }
             System.out.println("are the winners");
         }

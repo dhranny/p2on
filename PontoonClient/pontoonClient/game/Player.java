@@ -1,57 +1,35 @@
-package com.pontoonServer.game;
+package game;
 
-import com.pontoonServer.cardEngine.Hand;
-import com.pontoonServer.server.ConnectedPlayer;
+import cardEngine.Hand;
+import server.ConsoleConnector;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
-public class Player {
+public class Player implements Playable{
 
-    List<Hand> hands;
+    Hand hand;
     int value;
     public String name;
     public boolean isBank;
-    Player presentEngagement;
     public Move nextMove;
+    private ConsoleConnector connector = new ConsoleConnector();
 
-    public List<Hand> getHands() {
-        return hands;
+    public Hand getHand() {
+        return hand;
     }
 
-    public ConnectedPlayer getConnector() {
-        return connection;
+    public Player(String name) throws IOException {
+        this.name = name;
+        hand = new Hand();
     }
 
-    private ConnectedPlayer connection;
+    public Player() throws IOException {
 
-    public Player(ConnectedPlayer connection){
-        hands = new ArrayList<>();
-        hands.add(new Hand());
-        this.connection = connection;
     }
 
-    public Player(){
-        hands = new ArrayList<>();
-        hands.add(new Hand());
-    }
-
-
-
-    /**
-     * This method deals out a card to each
-     * player given as a parameter.
-     * @param players
-     */
-
-
-    /**
-     * This method set up a player to
-     * start a game.
-     */
-    public void start(){
-        connection.presentPlayer = this;
-    }
 
 
     /**
@@ -68,15 +46,11 @@ public class Player {
      * @return
      */
     public String getName(){
-        connection.sendMessage("getname");
-        synchronized (connection){
-            try {
-                connection.wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
         return name;
+    }
+
+    public void end(){
+        //TODO: do what is neccessary for player to end
     }
 
 
@@ -84,31 +58,37 @@ public class Player {
     /**
      * This method is used to get the next
      * move from the player
-     * @param player
      * @return
      */
-    protected Move getNextMove(Player player) {
-        player.connection.sendMessage("getmove");
-        synchronized (player.connection){
-            try {
-                player.connection.wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+    public Move getNextMove() {
+        System.out.println("These are your available moves");
+        Set<Move.AVAILABLE_MOVES> moves = hand.stateManager.getMoves();
+        for (Move.AVAILABLE_MOVES move:
+                moves) {
+            System.out.print("  " + move.toString() + "  ");
         }
-        return presentEngagement.nextMove;
+        System.out.println();
+        try {
+            String cliResponse = connector.getCliScanner().readLine();
+            cliResponse = cliResponse.toLowerCase().strip();
+            if(cliResponse.equals("deal") && moves.contains(Move.AVAILABLE_MOVES.DEAL)){
+                Move move = new Move();
+                move.setMove(Move.AVAILABLE_MOVES.DEAL);
+                return move;
+            }
+            if(cliResponse.equals("hold") && moves.contains(Move.AVAILABLE_MOVES.HOLD)){
+                Move move = new Move();
+                move.setMove(Move.AVAILABLE_MOVES.HOLD);
+                return move;
+            }
+
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
-    /**
-     * This is the setter method for name parameter.
-     * @param name
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-    public void end() {
-        value = 0;
-        connection.sendMessage("end");
-    }
 
 }

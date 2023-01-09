@@ -25,7 +25,6 @@ public class StateManager {
         if(handState == Hand.HAND_STATE.BUST) {
             finisher();
             System.out.println("You've busted");
-            connection.tellServer();
 
         }
 

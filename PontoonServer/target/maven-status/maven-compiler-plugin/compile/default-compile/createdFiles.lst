@@ -1,7 +1,0 @@
-com/pontoonServer/game/Bank.class
-com/pontoonServer/server/Connector.class
-com/pontoonServer/server/Connector$ServerAcceptor.class
-com/pontoonServer/server/Connectable.class
-com/pontoonServer/game/Bank$1.class
-com/pontoonServer/ServerMain.class
-com/pontoonServer/cardEngine/Card$CardType.class

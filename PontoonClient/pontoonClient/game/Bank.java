@@ -1,23 +1,18 @@
-package com.pontoonServer.game;
+package game;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.pontoonServer.cardEngine.Card;
-import com.pontoonServer.cardEngine.Deck;
-import com.pontoonServer.cardEngine.Hand;
-import com.pontoonServer.server.ConnectedPlayer;
+import cardEngine.Card;
+import cardEngine.Deck;
 
+import java.io.IOException;
 import java.util.List;
 
 public class Bank extends Player{
     private Deck deck;
+    Playable presentEngagement;
     public String name = "The Bank";
 
-    public Bank(ConnectedPlayer connection) {
-        super(connection);
-    }
-
-    public Bank(){
+    public Bank() throws IOException {
         deck = new Deck();
     }
 
@@ -31,8 +26,8 @@ public class Bank extends Player{
      * cards to each player.
      * @param players
      */
-    public void dealOutCards(List<Player> players) {
-        for (Player player :
+    public void dealOutCards(List<Playable> players) {
+        for (Playable player :
                 players) {
             if (player.isBank)
                 continue;
@@ -45,9 +40,10 @@ public class Bank extends Player{
      * of dealing until the player requests a hold.
      * @param player
      */
-    public void engageMiniGame(Player player) {
+    public void engageMiniGame(Playable player) {
         presentEngagement = player;
-        Move.AVAILABLE_MOVES move = getNextMove(player).getMove();
+        System.out.println(player.getName() + " is the present player now");
+        Move.AVAILABLE_MOVES move = player.getNextMove().move;
         while (move != Move.AVAILABLE_MOVES.HOLD) {
 
             switch (move) {
@@ -57,10 +53,10 @@ public class Bank extends Player{
                 default:
                     System.out.println("Wrong move");
             }
-            if(player.value > 21){
+            if(player.getValue() > 21){
                 return;
             }
-            move = getNextMove(player).getMove();
+            move = player.getNextMove().getMove();
         }
     }
 
@@ -70,12 +66,13 @@ public class Bank extends Player{
      * connected players
      * @param player
      */
-    private void dealCard(Player player) {
+    private void dealCard(Playable player) {
         presentEngagement = player;
         Card card = deck.deal();
         Gson gson1 = (new Gson()).newBuilder().create();
         String cardJson = gson1.toJson(card);
-        player.getConnector().sendMessage("card" + cardJson);
+        System.out.println(player.getName() + " received " + cardJson);
+        player.getHand().receiveCard(card);
     }
 
     /**
